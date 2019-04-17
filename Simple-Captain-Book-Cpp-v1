@@ -1,0 +1,238 @@
+#include "iostream"
+#include "string"
+#include "ctime"
+#include "cstring"
+
+
+using namespace std;
+
+//Here is my base class and constructor:
+class ship
+{
+	public:
+		char name[45];
+		char flag[45];
+		int imoNum;
+		int mmsiNum;
+	ship()
+	{	
+	}
+	ship (char shipname[45], char shipflag[45], int simoNum, int smmsiNum)
+		{
+			strcpy(name, shipname);
+			strcpy(flag, shipflag);
+			imoNum=simoNum;
+			mmsiNum=smmsiNum;						
+		}
+};
+
+//Here starts first generation children classes and constructors :
+class maneuvring : public ship 
+{
+	public:
+		int draftBow;
+		int draftAstern;
+		double radOfTurn;
+	maneuvring()
+		{
+		}
+	maneuvring (int sdraftBow,int sdraftAstern, double sradOfTurn, char name[45], char flag[45], int imoNum, int mmsiNum)
+	:ship (name,flag,imoNum,mmsiNum)
+		{
+			draftBow=sdraftBow;
+			draftAstern=sdraftAstern;
+			radOfTurn=sradOfTurn;			
+		}
+};
+
+class position : public ship 
+{
+	protected:
+		char latitude[45];
+		char longitude[45];
+	public:
+	position()
+		{		
+		}
+		char useNavMeans[30];
+
+	position (char suseNavMeans[30], char slatitude[45], char slongitude[45], char name[45], char flag[45], int imoNum, int mmsiNum)
+	:ship(name,flag,imoNum,mmsiNum)
+		{
+		strcpy (latitude, slatitude);
+		strcpy (longitude, slongitude);			
+	}		
+	void enter_position ()
+	{
+		cout<<"Please enter navigational means for position fix:"<<endl;
+		cin>>useNavMeans;
+		cout<<"Please enter latitude:"<<endl;
+		cin>>latitude;
+		cout<<"\nPlease enter longitude:"<<endl;
+		cin>>longitude;
+						
+	}
+	void display_position()
+	{
+		cout<<useNavMeans<<endl;
+		cout<<latitude<<longitude<<endl;
+	}
+};
+
+class logistics : public ship 
+{
+	public:
+		int provisions, fuel, water, battery;	
+		logistics()
+		{
+			
+		}
+		logistics( int sprov, int sfuel, int swater, int sbattery, char name[45], char flag[45], int imoNum, int mmsiNum)
+		:ship(name,flag,imoNum,mmsiNum)
+		{
+			provisions=sprov;
+			fuel=sfuel;
+			water=swater;
+			battery=sbattery;			
+		}
+};
+
+class engineering:public ship 
+{
+	public:
+		engineering()
+		{	
+		}
+		int shaft_rpm;
+		int genPower;
+		int engine_rpm;
+		int engine_temp;
+		engineering(int sshaft_rpm, int sgenPower, int sengine_rpm, int sengine_temp, 
+		char name[45], char flag[45], int imoNum, int mmsiNum):
+		ship (name, flag, imoNum, mmsiNum)                  
+		{
+			shaft_rpm=sshaft_rpm;
+			genPower=sgenPower;
+			engine_rpm=sengine_rpm;
+			engine_temp=sengine_temp;			
+		}	
+};
+
+
+//Here starts second generation classes and constructors
+class movement:public position 
+{
+	private:
+		int cog;
+		double sog;
+	public:
+		movement()
+		{	
+		}
+		movement(int scog, double ssog, char useNavMeans[30], char latitude[45], char longitude[45],
+		char name[45], char flag[45], int imoNum, int mmsiNum)
+		:position (useNavMeans, latitude, longitude, name, flag, imoNum, mmsiNum)    
+		{
+			cog=scog;
+			sog=ssog;	
+		}
+		void enter_movement()
+		{
+			cout<<"Please enter course over ground in degrees: "<<endl;
+			cin>>cog;
+			cout<<"Please enter speed over ground in knots: "<<endl;
+			cin>>sog;
+		}
+		void display_movement()
+		{
+			cout<<cog<<" "<<sog<<endl;
+		}		
+};
+
+class events:public position 
+{
+	protected:
+		char action[45];
+		char sign[45];
+	public:
+		events()
+		{
+		}
+		events(char saction[45], char ssign[45], char useNavMeans[30], char latitude[45], char longitude[45],
+		char name[45], char flag[45], int imoNum, int mmsiNum):
+		position (useNavMeans, latitude, longitude, name, flag, imoNum, mmsiNum)
+		{
+			strcpy (action, saction);
+			strcpy (sign, ssign);
+		}
+		void enter_action()
+		{
+			cout<<"Please enter action, remarks, etc. brief in 45 symbols:"<<endl;
+			cin>>action;
+			cout<<"Please sign new log recording:"<<endl;
+			cin>>sign;
+		}
+		void display_action()
+		{
+			cout<<action<<endl;
+			cout<<sign<<endl;
+		}	
+};
+
+
+
+/* run this program using the console pauser or add your own getch, system("pause") or input loop */
+
+
+int main(int argc, char** argv) {
+//Here are inputs for the first ship:
+	ship sh1;
+	strcpy(sh1.name,"Lea");
+	strcpy(sh1.flag,"Malta");
+	sh1.imoNum=845675;
+	sh1.mmsiNum=207345678;
+	maneuvring sh1_m;
+	sh1_m.draftBow = 6;
+	sh1_m.draftAstern = 7;
+	sh1_m.radOfTurn = 4;
+	logistics sh1_l;
+	sh1_l.provisions=60;
+	sh1_l.fuel=70;
+	sh1_l.water=92;
+	sh1_l.battery=67;
+	engineering sh1_eng;
+	sh1_eng.engine_rpm=320;
+	sh1_eng.engine_temp=70;
+	sh1_eng.genPower=550;
+	sh1_eng.shaft_rpm=140;
+	
+	position sh1_p;
+	sh1_p.enter_position();
+	movement sh1_mov;
+	sh1_mov.enter_movement();
+	events sh1_ev;
+	sh1_ev.enter_action();
+	
+//Here are all recordings for the first ship: 
+	cout<<endl;
+	cout<<"------------------------------------------------------"<<endl;
+    cout<<"   Motor vessel+"<<sh1.name<<"+  Flying under flag of "<<sh1.flag<<" IMO-"<<sh1.imoNum<<" MMSI-"<<sh1.mmsiNum<<"   "<<endl;
+    cout<<endl;
+	time_t now=time(0);
+	char* dt=ctime(&now);	
+	tm *gmtm = gmtime(&now);
+    dt = asctime(gmtm);
+	cout << "The UTC date and time is:"<< dt << endl;		
+	sh1_p.display_position();
+	sh1_mov.display_movement();
+	sh1_ev.display_action();
+	cout<<"Maneuvring elements: "<<endl;
+	cout<<sh1_m.draftBow<<"m "<<sh1_m.draftAstern<<"m "<<sh1_m.radOfTurn<<"cabelts"<<endl;
+	cout<<"Logistics data: "<<endl;
+	cout<<"Provisions-"<<sh1_l.provisions<<"\% Fuel-"<<sh1_l.fuel<<"\% Water-"<<sh1_l.water<<"\% Battery-"<<sh1_l.battery<<"\% "<<endl;	
+	cout<<"Engineering data: "<<endl;
+	cout<<"Engine-"<<sh1_eng.engine_rpm<<"rpm Engine temp-"<<sh1_eng.engine_temp<<
+	"degrees C Shaft-"<<sh1_eng.shaft_rpm<<"rpm Generator power-"<<sh1_eng.genPower<<"kW"<<endl;
+	cout<<"------------------------------------------------------"<<endl;
+	return 0;
+}
